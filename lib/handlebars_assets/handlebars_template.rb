@@ -67,7 +67,7 @@ module HandlebarsAssets
     end
 
     def compile_ember(source)
-      "window.Ember.TEMPLATES[#{@template_path.name}] = Ember.Handlebars.compile(#{JSON.dump(source)});"
+      "window.Ember.TEMPLATES[#{@template_path.name.sub('_','')}] = Ember.Handlebars.compile(#{JSON.dump(source)});"
     end
 
     def compile_default(source)
@@ -88,7 +88,7 @@ module HandlebarsAssets
             unindent <<-PARTIAL
               define(['#{handlebars_amd_path}'],function(Handlebars){
                 var t = #{template};
-                Handlebars.registerPartial(#{@template_path.name}, t);
+                Handlebars.registerPartial(#{@template_path.name.sub('_','')}, t);
                 return t;
               ;})
             PARTIAL
@@ -104,7 +104,7 @@ module HandlebarsAssets
             unindent <<-PARTIAL
               define(['#{handlebars_amd_path}'],function(Handlebars){
                 var t = #{template};
-                Handlebars.registerPartial(#{@template_path.name}, t);
+                Handlebars.registerPartial(#{@template_path.name.sub('_','')}, t);
                 return t;
               ;})
             PARTIAL
@@ -112,8 +112,8 @@ module HandlebarsAssets
             unindent <<-TEMPLATE
               define(['#{handlebars_amd_path}'],function(Handlebars){
                 this.#{template_namespace} || (this.#{template_namespace} = {});
-                this.#{template_namespace}[#{@template_path.name}] = #{template};
-                return this.#{template_namespace}[#{@template_path.name}];
+                this.#{template_namespace}[#{@template_path.name.sub('_','')}] = #{template};
+                return this.#{template_namespace}[#{@template_path.name.sub('_','')}];
               });
             TEMPLATE
           end
@@ -122,15 +122,15 @@ module HandlebarsAssets
         if @template_path.is_partial?
           unindent <<-PARTIAL
             (function() {
-              Handlebars.registerPartial(#{@template_path.name}, #{template});
+              Handlebars.registerPartial(#{@template_path.name.sub('_','')}, #{template});
             }).call(this);
           PARTIAL
         else
           unindent <<-TEMPLATE
             (function() {
               this.#{template_namespace} || (this.#{template_namespace} = {});
-              this.#{template_namespace}[#{@template_path.name}] = #{template};
-              return this.#{template_namespace}[#{@template_path.name}];
+              this.#{template_namespace}[#{@template_path.name.sub('_','')}] = #{template};
+              return this.#{template_namespace}[#{@template_path.name.sub('_','')}];
             }).call(this);
           TEMPLATE
         end
